@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Users = require("./models/UsersSchema");
 
 const app = express();
-
+app.use(express.json())
 const PORT = 8000;
 
 main().catch((err) => console.log(err));
@@ -22,22 +22,27 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.post("/addUser", async (req, res) => {
-  const myUser = {
-    name: "Huraira",
-  };
-
+app.post("/user", async (req, res) => {
   try {
-    const small = await Users.create(myUser)
+    const small = await Users.create(req.body)
 
     res.send({
       status: true,
       message: "User Added Successfully",
     });
   } catch (error) {
-    console.log(error, '==>> Error')
+    console.log(error.message, '==>> Error')
   }
 });
+
+app.get('/users',async(req,res)=>{
+  const users = await Users.find()
+  res.json({
+    status:true,
+    message: "All Users Fetched",
+    data: users
+  })
+})
 
 app.listen(PORT, () => {
   console.log("Application is working on port number " + PORT);
